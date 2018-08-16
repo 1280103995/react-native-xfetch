@@ -152,9 +152,8 @@ class XFetch {
   }
 
   _getHeaders(){
-    if (this.tempHeader != null
-      && this.tempHeader.hasOwnProperty('Authorization')
-      && instance.commonHeader.hasOwnProperty('Authorization')){
+    if (this.tempHeader == null) return  instance.commonHeader;
+    if (this.tempHeader.hasOwnProperty('Authorization') && instance.commonHeader.hasOwnProperty('Authorization')){
       this.tempHeader['Authorization'] = instance.commonHeader['Authorization']
     }
     return this.tempHeader

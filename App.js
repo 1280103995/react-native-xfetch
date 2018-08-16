@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import AppNavigator from "./src/navigation/StackNavigator";
 import {XFetch, XFetchConfig} from "./XFetch";
+import {NavigationActions} from "react-navigation";
 
 global.isLogin = false;
 global.tokenTime = 0;
@@ -19,7 +20,7 @@ export default class App extends Component {
     };
 
     XFetchConfig.getInstance()
-      .setBaseUrl('http://192.168.100.101:8000/')
+      .setBaseUrl('http://10.18.204.63:8000/')
       .setCommonHeaders(commonHeader)
       .setCommonTimeOut(30000)
       //here, you can monitor the response results of all requests.
@@ -38,7 +39,8 @@ export default class App extends Component {
           console.log('refresh token success')
         }).catch((error) => {
           console.log('refresh token fail');
-          isLogin = false
+          isLogin = false;
+          NavigationActions.navigate('Login')
           //do something...
           //for example, re login.
         })
@@ -47,12 +49,12 @@ export default class App extends Component {
 
   handleResponse = (isResponseSuccess, url, resolve, reject, data) =>{
     if (isResponseSuccess) {
-      // if (data.code > 100000) {// code is your server's custom fields
-      //   throw new Error(JSON.stringify(data))
-      // } else {
+      if (!data.success) {// code is your server's custom fields
+        throw new Error(JSON.stringify(data))
+      } else {
         resolve(data);
         console.log('XFetch_success-->', `url:${url}\n`, data);
-      // }
+      }
     }else {
       reject(data);
       console.log('XFetch_error-->', `url:${url}\n`, data);

@@ -10,7 +10,7 @@ http.createServer(function (request, response) {
 
   var pathname = url.parse(request.url).pathname;
 
-  authorization = response.getHeader('Authorization');
+  authorization = request.headers.authorization;
   if (authorization) {
     var token_time = parseFloat(authorization);
     var cur_time = new Date().getTime();
@@ -28,22 +28,29 @@ http.createServer(function (request, response) {
     response.end(JSON.stringify(result));
   }else if (pathname == "/refresh_token" && request.method === 'POST'){//POST
 
-    var body = {
-      "success" : true,
-      "msg": "refresh token success",
-      "data" : {
-        "token" : new Date().getTime().toString()
-      }
+    var refreshTokenInvalid = false;
+    if (authorization) {
+      var token_time = parseFloat(authorization);
+      var cur_time = new Date().getTime();
+      refreshTokenInvalid = cur_time - token_time > 10 * 1000;
     }
 
-    request.on('data', function (chunk) {
+    var body = null;
+    if (refreshTokenInvalid){
+      body = {
+        "success" : false,
+        "msg": "refresh_token invalid",
+        "data" : null
+      }
+    }else {
       body = {
         "success" : true,
-          "data" : {
+        "msg": "refresh token success",
+        "data" : {
           "token" : new Date().getTime().toString()
         }
       }
-    });
+    }
 
     response.end(JSON.stringify(body));
   } else if (pathname == "/test_post" && request.method === 'POST') {
@@ -56,15 +63,6 @@ http.createServer(function (request, response) {
         "msg": "test post success",
         "data" : null
       }
-
-      request.on('data', function (chunk) {
-        body = {
-          "success" : true,
-          "data" : {
-            "token" : new Date().getTime().toString()
-          }
-        }
-      });
 
       response.end(JSON.stringify(body));
     }
