@@ -71,9 +71,6 @@
 1. timeout: 30s
 2. header: 'Content-Type': 'application/json'
 3. If your request parameter is a form and setParams(params, true) is used, the header's 'Content-Type' value will be set to     'multipart/form-data'
-------
-## See demo for more information.
-
 
 ## Run demo
 
@@ -85,5 +82,6 @@
 
 4. `react-native run-android` or `react-native run-ios`
 
-
+------
+## See demo for more information.
 
