@@ -14,14 +14,14 @@
 # how to use
 
 ## Step 1:
-    I can't use npm to publish this library. So if you want to use this library, please `yarn add query-string` in your project and download `XFetch.js` to your project.
+    I can't use npm to publish this library. So if you want to use this library, 
+    please `yarn add query-string` in your project and download `XFetch.js` to your project.
     
 ## Step 2:
     init XFetch: 
     
-    1)  `import {XFetch, XFetchConfig} from "./XFetch";`
+    1)  import {XFetch, XFetchConfig} from "./XFetch";
     2) 
-    ```
         //set all request heads
         const commonHeader = {
           'Content-Type': 'application/json',
@@ -55,12 +55,10 @@
         checkTokenExpired = () => isTokenExpired;
         
         refreshToken = () => new XFetch().post('refresh_token') //please do not use the do() here.
-    ```
        
 ## Step 3: 
     normal use: 
     
-    ```
        import {XFetch} from "./XFetch";
     
        let promise = new XFetch().get('your address').do().then((res) => {
@@ -68,19 +66,18 @@
        }).catch((error) => {
           ...
        });
-    ```
     
 ## defaultProps
 1. timeout: 30s
 2. header: 'Content-Type': 'application/json'
 3. If your request parameter is a form and setParams(params, true) is used, the header's 'Content-Type' value will be set to     'multipart/form-data'
-
+------
 ## See demo for more information.
 
 
 ## Run demo
 
-1. `git clone `
+1. `git clone https://github.com/1280103995/react-native-xfetch.git`
 
 2. `cd react-native-xfetch && npm install`
 
