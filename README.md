@@ -15,7 +15,7 @@
 
 ## Step 1:
     I can't use npm to publish this library. So if you want to use this library, 
-    please**yarn add query-string**in your project and download**XFetch.js**to your project.
+    please *yarn add query-string* in your project and download *XFetch.js* to your project.
     
 ## Step 2:
     init XFetch: 
