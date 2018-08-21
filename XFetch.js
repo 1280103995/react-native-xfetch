@@ -11,7 +11,7 @@ class XFetchConfig {
   responseFunc: Function;
   refreshTokenPromise = null;
   isTokenRefreshing = false;
-  isTokenExpired: Function;
+  isTokenExpired: Function = () => null;
   refreshTokenFunc: Function;
   refreshTokenCallBackFunc: Function;
 
