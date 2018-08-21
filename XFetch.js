@@ -6,7 +6,7 @@ let instance = null;
 class XFetchConfig {
   baseUrl = null;
   commonTimeOut = 30 * 1000;
-  commonHeader = {'Content-Type': 'application/json; charset=utf-8'};
+  commonHeader = {'Content-Type': 'application/json'};
 
   responseFunc: Function;
   refreshTokenPromise = null;
