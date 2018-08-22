@@ -1,8 +1,8 @@
 'use strict';
 import React, {Component} from 'react';
 import AppNavigator from "./src/navigation/StackNavigator";
-import {XFetch, XFetchConfig} from "./XFetch";
 import {NavigationActions} from "react-navigation";
+import {XFetch, XFetchConfig} from "react-native-xfetch";
 
 global.isLogin = false;
 global.tokenTime = 0;

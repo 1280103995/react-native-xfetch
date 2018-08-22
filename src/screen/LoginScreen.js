@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Text, TextInput, View} from "react-native";
-import {XFetch, XFetchConfig} from "../../XFetch";
+import {XFetch, XFetchConfig} from "react-native-xfetch";
 
 export default class LoginScreen extends React.Component {
 

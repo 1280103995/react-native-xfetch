@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, RefreshControl, ScrollView} from "react-native";
-import {XFetch} from "../../XFetch";
+import {XFetch} from "react-native-xfetch";
 
 export default class HomeScreen extends React.Component {
 
