@@ -14,13 +14,12 @@
 # how to use
 
 ## Step 1:
-    I can't use npm to publish this library. So if you want to use this library, 
-    please <yarn add query-string> in your project and download <XFetch.js> to your project.
+    yarn add react-native-xfetch
     
 ## Step 2:
     init XFetch: 
     
-    1)  import {XFetch, XFetchConfig} from "./XFetch";
+    1)  import {XFetch, XFetchConfig} from "react-native-xfetch";
     2) 
         //set all request heads
         const commonHeader = {
@@ -59,7 +58,7 @@
 ## Step 3: 
     normal use: 
     
-       import {XFetch} from "./XFetch";
+       import {XFetch} from "react-native-xfetch";
     
        let promise = new XFetch().get('your address').do().then((res) => {
           ...
