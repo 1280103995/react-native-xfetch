@@ -64,7 +64,6 @@ export default class App extends Component {
   };
 
   checkTokenExpired() {
-    console.log('token过期时间：' + new Date(parseInt(tokenTime) + 30000), '现在时间：' + new Date())
     return isLogin && parseInt(tokenTime) + 30000 <= new Date().getTime();
   }
 
