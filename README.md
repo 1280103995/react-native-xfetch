@@ -29,7 +29,7 @@
         };
         
         XFetchConfig.getInstance()
-          .setBaseUrl('Your host')
+          .setBaseUrl('http host')
           .setCommonHeaders(commonHeader)
           .setCommonTimeOut(30000)
           //here, you can monitor the response results of all requests.
