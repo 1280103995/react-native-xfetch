@@ -40,20 +40,28 @@
           })
           
           
-        ...
+        ......
           
         handleResponse = (isResponseSuccess, url, resolve, reject, data) =>{
           if (isResponseSuccess) {
-            
+            if (!data.success) {// success is your server's custom fields
+                throw new Error(JSON.stringify(data))
+            } else {
+                resolve(data);
+                console.log('XFetch_success-->', `url:${url}\n`, data);
+            }
           }else {
-            
+            reject(data);
+            console.log('XFetch_error-->', `url:${url}\n`, data);
+            //do something...
+            //for example, Toast.
           }
         };
         
         
         checkTokenExpired = () => isTokenExpired;
         
-        refreshToken = () => new XFetch().post('refresh_token') //please do not use the do() here.
+        refreshToken = () => new XFetch().post('refresh_token').setHeaders(...).setParams(...) //please do not use the do() here.
        
 ## Step 3: 
     normal use: 
