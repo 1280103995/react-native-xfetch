@@ -36,7 +36,11 @@
           .setResponseConfig(this.handleResponse)
           //param 1: isTokenExpired? , param 2: refreshToken http , param 3: refreshToken response
           .setRefreshTokenConfig(this.checkTokenExpired, this.refreshToken, (promise) => {
-             ... 
+             promise.then((res) => {
+               ...
+             }).catch((error) => {
+               ...
+             }) 
           })
           
           
