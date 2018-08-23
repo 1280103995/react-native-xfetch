@@ -60,7 +60,14 @@
     
        import {XFetch} from "react-native-xfetch";
     
-       let promise = new XFetch().get('your address').do().then((res) => {
+       let promise = new XFetch().get('your address').setHeaders(...).setParams(...).do().then((res) => {
+          ...
+       }).catch((error) => {
+          ...
+       });
+       
+       
+       let promise1 = new XFetch().post('your address').setHeaders(...).setParams(..., isFormData = false).do().then((res) => {
           ...
        }).catch((error) => {
           ...
