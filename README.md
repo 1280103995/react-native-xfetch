@@ -21,10 +21,10 @@
     
     1)  import {XFetch, XFetchConfig} from "react-native-xfetch";
     2) 
-        //set all request heads
+        //set the public header like this
         const commonHeader = {
           'Content-Type': 'application/json',
-          'platform': 'android',
+          'platform': 'android or ios',
           'deviceId': '6f580xxxxxx-e7aaaaaaaa0'
         };
         
