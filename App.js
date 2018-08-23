@@ -49,7 +49,7 @@ export default class App extends Component {
 
   handleResponse = (isResponseSuccess, url, resolve, reject, data) =>{
     if (isResponseSuccess) {
-      if (!data.success) {// code is your server's custom fields
+      if (!data.success) {// success is your server's custom fields
         throw new Error(JSON.stringify(data))
       } else {
         resolve(data);
