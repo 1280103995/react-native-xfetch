@@ -100,7 +100,7 @@
 
 4. `react-native run-android` or `react-native run-ios`
 
-------
+
 ## License
 The MIT License.
 
