@@ -1,5 +1,6 @@
 import React from 'react';
 import {Button, RefreshControl, ScrollView} from "react-native";
+// import {XFetch} from "../../XFetch";
 import {XFetch} from "react-native-xfetch";
 
 export default class HomeScreen extends React.Component {
@@ -21,13 +22,18 @@ export default class HomeScreen extends React.Component {
       alert('unlogin');
       return
     }
-    let home = new XFetch().get('request').do().then((res) => {
+    //test: only use this header
+    const header = {
+      'testHeader': 'test'
+    };
+    let home = new XFetch().get('request').setHeaders(header, true).do().then((res) => {
 
     }).catch((error) => {
 
     });
 
-    let praise = new XFetch().post('test_post').do().then(() => {
+    //test: this request has no request header
+    let praise = new XFetch().post('test_post').setHeaders(null).setParams({'test': 111}).do().then(() => {
 
     }).catch((e) => {
 

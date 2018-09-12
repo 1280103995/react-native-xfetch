@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import AppNavigator from "./src/navigation/StackNavigator";
 import {NavigationActions} from "react-navigation";
+// import {XFetch, XFetchConfig} from "./XFetch";
 import {XFetch, XFetchConfig} from "react-native-xfetch";
 
 global.isLogin = false;
@@ -20,7 +21,7 @@ export default class App extends Component {
     };
 
     XFetchConfig.getInstance()
-      .setBaseUrl('http://10.18.204.63:8000/')
+      .setBaseUrl('http://192.168.100.100:8000/')
       .setCommonHeaders(commonHeader)
       .setCommonTimeOut(30000)
       //here, you can monitor the response results of all requests.
