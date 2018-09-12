@@ -89,6 +89,9 @@
 1. timeout: 30s
 2. header: 'Content-Type': 'application/json'
 3. If your request parameter is a form and setParams(params, true) is used, the header's 'Content-Type' value will be set to     'multipart/form-data'
+4. setHeaders(null): this request has no request header
+5. setHeaders(header, isReplace = false): merge this header and commonHeader
+6. setHeaders(header, isReplace = true): only use this header
 
 ## Run demo
 
