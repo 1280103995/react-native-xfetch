@@ -4211,11 +4211,9 @@ react-native-tab-view@^1.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-native-xfetch@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.npmjs.org/react-native-xfetch/-/react-native-xfetch-0.0.1.tgz#755368c93c031f3122ddb75625bc92d82e0716cc"
-  dependencies:
-    query-string "^6.1.0"
+react-native-xfetch@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.npmjs.org/react-native-xfetch/-/react-native-xfetch-0.0.2.tgz#7cf1267ff032265c307c8af395b72bcdfa6c44d2"
 
 react-native@0.55.4:
   version "0.55.4"

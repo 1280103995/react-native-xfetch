@@ -1,5 +1,6 @@
 import React from 'react';
 import {Button, Text, TextInput, View} from "react-native";
+// import {XFetch, XFetchConfig} from "../../XFetch";
 import {XFetch, XFetchConfig} from "react-native-xfetch";
 
 export default class LoginScreen extends React.Component {
@@ -13,7 +14,14 @@ export default class LoginScreen extends React.Component {
   }
 
   _login = () => {
-    new XFetch().get('get_token').do().then((res)=>{
+    const header = {
+      'loginTestHeader': 'loginTest'
+    };
+    const param = {
+      'auth': '123'
+    };
+    //test: merge this header and commonHeader
+    new XFetch().get('get_token').setHeaders(header).setParams(param).do().then((res)=>{
       //after login success, add "Authorization" to HTTP header
       XFetchConfig.getInstance()
         .setCommonHeaders({
