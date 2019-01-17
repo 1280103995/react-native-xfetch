@@ -21,7 +21,7 @@ export default class App extends Component {
     };
 
     XFetchConfig.getInstance()
-      .setBaseUrl('http://192.168.100.100:8000/')
+      .setBaseUrl('http://10.18.204.63:8000/')
       .setCommonHeaders(commonHeader)
       .setCommonTimeOut(30000)
       //here, you can monitor the response results of all requests.
