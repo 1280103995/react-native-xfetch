@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, RefreshControl, ScrollView} from "react-native";
+import {Button, RefreshControl, ScrollView, Text} from "react-native";
 // import {XFetch} from "../../XFetch";
 import {XFetch} from "react-native-xfetch";
 
@@ -17,11 +17,13 @@ export default class HomeScreen extends React.Component {
   };
 
   _onRefresh = () => {
-    this.setState({refreshState: true});
     if (!isLogin) {
       alert('unlogin');
       return
     }
+
+    this.setState({refreshState: true});
+
     //test: only use this header
     const header = {
       'testHeader': 'test'
@@ -45,7 +47,7 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <ScrollView
-        contentContainerStyle={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+        contentContainerStyle={{flex: 1, justifyContent:'center', alignItems: 'center'}}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshState}
@@ -57,7 +59,8 @@ export default class HomeScreen extends React.Component {
             progressBackgroundColor={'white'}/>
         }
       >
-        <Button title='login' onPress={this._login}/>
+        <Text>pull down test request</Text>
+        <Button title='login' onPress={this._login} />
       </ScrollView>
     )
   }

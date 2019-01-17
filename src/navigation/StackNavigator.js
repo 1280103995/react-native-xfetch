@@ -1,4 +1,4 @@
-import CardStackStyleInterpolator from "react-navigation/src/views/StackView/StackViewStyleInterpolator";
+import StackViewStyleInterpolator from "react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator";
 import {createStackNavigator} from "react-navigation";
 import LoginScreen from "../screen/LoginScreen";
 import HomeScreen from "../screen/HomeScreen";
@@ -15,7 +15,7 @@ export default AppNavigator = createStackNavigator(
     mode: 'card',
     headerMode: 'screen',
     transitionConfig: () => ({
-      screenInterpolator: CardStackStyleInterpolator.forHorizontal,
+      screenInterpolator: StackViewStyleInterpolator.forHorizontal,
     })
   }
 );

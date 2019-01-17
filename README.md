@@ -101,7 +101,9 @@
 
 3. `cd server && node refresh_token.js` run http service
 
-4. `react-native run-android` or `react-native run-ios`
+4. `don't forget to modify the BaseUrl`
+
+5. `react-native run-android` or `react-native run-ios`
 
 
 ## License

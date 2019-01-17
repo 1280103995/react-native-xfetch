@@ -1,12 +1,14 @@
 'use strict';
 import React, {Component} from 'react';
 import AppNavigator from "./src/navigation/StackNavigator";
-import {NavigationActions} from "react-navigation";
+import {createAppContainer, NavigationActions} from "react-navigation";
 // import {XFetch, XFetchConfig} from "./XFetch";
 import {XFetch, XFetchConfig} from "react-native-xfetch";
 
 global.isLogin = false;
 global.tokenTime = 0;
+
+const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends Component {
 
@@ -21,7 +23,7 @@ export default class App extends Component {
     };
 
     XFetchConfig.getInstance()
-      .setBaseUrl('http://10.18.204.63:8000/')
+      .setBaseUrl('http://xxx.xxx.xxx.xxx:8000/') //TODO  input computer's IP address
       .setCommonHeaders(commonHeader)
       .setCommonTimeOut(30000)
       //here, you can monitor the response results of all requests.
@@ -41,9 +43,9 @@ export default class App extends Component {
         }).catch((error) => {
           console.log('refresh token fail');
           isLogin = false;
-          NavigationActions.navigate('Login')
           //do something...
           //for example, re login.
+          this._toLogin();
         })
       })
   }
@@ -72,9 +74,20 @@ export default class App extends Component {
     return new XFetch().post('refresh_token') //Do not use the do() method here.
   };
 
+  _toLogin = () => {
+    this.navigator &&
+    this.navigator.dispatch(
+      NavigationActions.navigate({ routeName: 'Login' })
+    );
+  };
+
   render() {
     return (
-        <AppNavigator/>
+        <AppContainer
+          ref={nav => {
+            this.navigator = nav;
+          }}
+        />
     );
   }
 }
