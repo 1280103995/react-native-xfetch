@@ -6,7 +6,7 @@ let instance = null;
 class XFetchConfig {
   baseUrl = null;
   commonTimeOut = 30 * 1000;
-  commonHeader = {'Content-Type': 'application/json'};
+  commonHeaders = {'Content-Type': 'application/json'};
 
   responseFunc: Function;
   refreshTokenPromise = null;
@@ -45,7 +45,13 @@ class XFetchConfig {
     return Promise.race([fetch_promise, timeout_promise])
   }
 
-  async _baseRequest(method, url, params = null, isFormData = false, header = null, timeout) {
+  _baseRequest(xfetch: XFetch) {
+    let method = xfetch.method;
+    let url = xfetch._getUrl();
+    let params = xfetch.params;
+    let isFormData = xfetch.isForm;
+    let header = xfetch._getHeaders();
+    let timeout = xfetch.timeout;
 
     if (method === 'GET' && params !== null) {
       url += '?' + queryString.stringify(params);
@@ -120,9 +126,9 @@ class XFetchConfig {
 
   setCommonHeaders(headers, isReplace = false) {
     if (isReplace) {
-      this.commonHeader = headers;
+      this.commonHeaders = headers;
     } else {
-      this.commonHeader = Object.assign(this.commonHeader, headers)
+      this.commonHeaders = Object.assign(this.commonHeaders, headers)
     }
     return this
   }
@@ -130,35 +136,35 @@ class XFetchConfig {
 }
 
 class XFetch {
-  tempUrl = null;
+  url = null;
   method = null;
   timeout = 0;
-  tempHeader = null;
+  headers = null;
   params = null;
   isForm = false;
-  noHeaders = false; //this request has no request header
+  noHeaders = false;
 
   _doRefreshToken(){
-    return instance._baseRequest(this.method, this._getUrl(), this.params, this.isForm, this._getHeaders(), this.timeout);
+    return instance._baseRequest(this);
   }
 
   _getUrl() {
-    let url = null;
-    if (this.tempUrl.startsWith('http') || this.tempUrl.startsWith('https')) {
-      url = this.tempUrl
+    let tempUrl = null;
+    if (this.url.startsWith('http') || this.url.startsWith('https')) {
+      tempUrl = this.url
     } else {
-      url = instance.baseUrl + this.tempUrl
+      tempUrl = instance.baseUrl + this.url
     }
-    return url
+    return tempUrl
   }
 
   _getHeaders(){
-    if (this.noHeaders && this.tempHeader == null) return null;
-    if (this.tempHeader == null) return instance.commonHeader;
-    if (this.tempHeader.hasOwnProperty('Authorization') && instance.commonHeader.hasOwnProperty('Authorization')){
-      this.tempHeader['Authorization'] = instance.commonHeader['Authorization']
+    if (this.noHeaders && this.headers == null) return null;
+    if (this.headers == null) return instance.commonHeaders;
+    if (this.headers.hasOwnProperty('Authorization') && instance.commonHeaders.hasOwnProperty('Authorization')){
+      this.headers['Authorization'] = instance.commonHeaders['Authorization']
     }
-    return this.tempHeader
+    return this.headers
   }
 
   setTimeOut(time: number) {
@@ -171,10 +177,10 @@ class XFetch {
       this.noHeaders = true
     } else {
       if (isReplace) {
-        this.tempHeader = header;
+        this.headers = header;
       } else {
-        const tempHeader = JSON.parse(JSON.stringify(instance.commonHeader));
-        this.tempHeader = Object.assign(tempHeader, header);
+        const tempHeaders = JSON.parse(JSON.stringify(instance.commonHeaders));
+        this.headers = Object.assign(tempHeaders, header);
       }
     }
     return this
@@ -186,33 +192,33 @@ class XFetch {
       const header = {
         'Content-Type': 'multipart/form-data',
       };
-      const tempHeader = JSON.parse(JSON.stringify(instance.commonHeader));
-      this.tempHeader = Object.assign(tempHeader, header);
+      const tempHeaders = JSON.parse(JSON.stringify(instance.commonHeaders));
+      this.headers = Object.assign(tempHeaders, header);
       this.isForm = true;
     }
     return this
   }
 
   get(url: string) {
-    this.tempUrl = url;
+    this.url = url;
     this.method = 'GET';
     return this
   }
 
   post(url: string) {
-    this.tempUrl = url;
+    this.url = url;
     this.method = 'POST';
     return this
   }
 
   put(url: string) {
-    this.tempUrl = url;
+    this.url = url;
     this.method = 'PUT';
     return this
   }
 
   delete(url: string) {
-    this.tempUrl = url;
+    this.url = url;
     this.method = 'DELETE';
     return this
   }
@@ -224,7 +230,7 @@ class XFetch {
         return Promise.reject(promise);
       }
     }
-    return instance._baseRequest(this.method, this._getUrl(), this.params, this.isForm, this._getHeaders(), this.timeout);
+    return instance._baseRequest(this);
   }
 }
 

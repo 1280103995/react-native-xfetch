@@ -1,83 +1,83 @@
-var http = require('http');
-var url = require('url');
-var querystring = require('querystring');
-var authorization = null;
-var isTokenExpired = false;
+let http = require('http');
+let url = require('url');
+let querystring = require('querystring');
+let authorization = null;
+let isTokenExpired = false;
 
 http.createServer(function (request, response) {
 
   response.writeHead(200, {'Content-Type': 'application/json'});
 
-  var pathname = url.parse(request.url).pathname;
+  let pathname = url.parse(request.url).pathname;
 
   authorization = request.headers.authorization;
   if (authorization) {
-    var token_time = parseFloat(authorization);
-    var cur_time = new Date().getTime();
+    let token_time = parseFloat(authorization);
+    let cur_time = new Date().getTime();
     isTokenExpired = cur_time - token_time < 30 * 1000;
   }
 
-  if (pathname == "/get_token"){//GET
+  if (pathname === "/get_token") {//GET
     // get a new token or refresh the token
-    var result = {
-      "success" : true,
-      "data" : {
-        "token" : new Date().getTime().toString()
+    let result = {
+      "success": true,
+      "data": {
+        "token": new Date().getTime().toString()
       }
-    }
+    };
     response.end(JSON.stringify(result));
-  }else if (pathname == "/refresh_token" && request.method === 'POST'){//POST
+  } else if (pathname === "/refresh_token" && request.method === 'POST') {//POST
 
-    var refreshTokenInvalid = false;
+    let refreshTokenInvalid = false;
     if (authorization) {
-      var token_time = parseFloat(authorization);
-      var cur_time = new Date().getTime();
-      refreshTokenInvalid = cur_time - token_time > 10 * 1000;
+      let token_time = parseFloat(authorization);
+      let cur_time = new Date().getTime();
+      refreshTokenInvalid = cur_time - token_time > 60 * 1000;
     }
 
-    var body = null;
-    if (refreshTokenInvalid){
+    let body = null;
+    if (refreshTokenInvalid) {
       body = {
-        "success" : false,
+        "success": false,
         "msg": "refresh_token invalid",
-        "data" : null
+        "data": null
       }
-    }else {
+    } else {
       body = {
-        "success" : true,
+        "success": true,
         "msg": "refresh token success",
-        "data" : {
-          "token" : new Date().getTime().toString()
+        "data": {
+          "token": new Date().getTime().toString()
         }
       }
     }
 
     response.end(JSON.stringify(body));
-  } else if (pathname == "/test_post" && request.method === 'POST') {
+  } else if (pathname === "/test_post" && request.method === 'POST') {
 
-    if (isTokenExpired){
-      response.end(JSON.stringify({"success": false, "error_code" : 1001, "msg": "token expired"}));
+    if (isTokenExpired) {
+      response.end(JSON.stringify({"success": false, "error_code": 1001, "msg": "token expired"}));
     } else {
-      var body = {
-        "success" : true,
+      let body = {
+        "success": true,
         "msg": "test post success",
-        "data" : null
-      }
+        "data": null
+      };
 
       response.end(JSON.stringify(body));
     }
 
-  }else if (pathname == "/request"){//GET
+  } else if (pathname === "/request") {//GET
     // Normal request
     if (isTokenExpired) {
-      response.end(JSON.stringify({"success": false, "error_code" : 1001, "msg": "token expired"}));
-    }else {
-      var result = {
-        "success" : true,
-        "data" : {
-          "result" : true
+      response.end(JSON.stringify({"success": false, "error_code": 1001, "msg": "token expired"}));
+    } else {
+      let result = {
+        "success": true,
+        "data": {
+          "result": true
         }
-      }
+      };
       response.end(JSON.stringify(result));
     }
   }
