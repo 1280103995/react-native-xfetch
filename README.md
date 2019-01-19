@@ -95,6 +95,8 @@
 
 ## Run demo
 
+The token validity period is 30s, and the refresh token is valid for 60s.
+
 1. `git clone https://github.com/1280103995/react-native-xfetch.git`
 
 2. `cd react-native-xfetch && npm install`
