@@ -52,6 +52,7 @@ class XFetchConfig {
     let isFormData = xfetch.isForm;
     let header = xfetch._getHeaders();
     let timeout = xfetch.timeout;
+    let cookie = xfetch.cookie;
 
     if (method === 'GET' && params !== null) {
       url += '?' + queryString.stringify(params);
@@ -67,15 +68,19 @@ class XFetchConfig {
       body: isFormData ? params : JSON.stringify(params)
     };
 
+    if (cookie) option.credentials = 'include'
+
     return new Promise((resolve, reject) => {
+      let callbackResponse = null;
       this._timeoutFetch(fetch(url, option), timeout).then((response) =>{
+        callbackResponse = response;
         if (response.ok) return response.json();
         else throw new Error(JSON.stringify(response))
       }).then((responseData) => {
-        if (this.responseFunc) this.responseFunc(true, url, resolve, reject, responseData);
+        if (this.responseFunc) this.responseFunc(true, callbackResponse, resolve, reject, responseData);
         else resolve(responseData)
       }).catch((error) => {
-        if (this.responseFunc) this.responseFunc(false, url, resolve, reject, error);
+        if (this.responseFunc) this.responseFunc(false, callbackResponse, resolve, reject, error);
         else reject(error)
       })
     })
@@ -143,6 +148,7 @@ class XFetch {
   params = null;
   isForm = false;
   noHeaders = false;
+  cookie = false;
 
   _doRefreshToken(){
     return instance._baseRequest(this);
@@ -196,6 +202,11 @@ class XFetch {
       this.headers = Object.assign(tempHeaders, header);
       this.isForm = true;
     }
+    return this
+  }
+
+  useCookie(use: boolean){
+    this.cookie = use;
     return this
   }
 
