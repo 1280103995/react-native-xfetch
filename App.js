@@ -23,7 +23,7 @@ export default class App extends Component {
     };
 
     XFetchConfig.getInstance()
-      .setBaseUrl('http://xxx.xxx.xxx.xxx:8000/') //TODO  input computer's IP address
+      .setBaseUrl('http://xxx.xxx.xxx.xxx:8000/') //TODO  your server url
       .setCommonHeaders(commonHeader)
       .setCommonTimeOut(30000)
       //here, you can monitor the response results of all requests.
