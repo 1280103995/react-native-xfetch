@@ -2,14 +2,15 @@
 
 ## XFetch Supports 
 
-1. refreshToken   (See in App.js)
+1. refreshToken
 2. setTimeOut()
 3. setHeaders()
 4. setParams()
-5. get()
-6. post()
-7. put()
-8. delete()
+5. useCookie()
+6. get()
+7. post()
+8. put()
+9. delete()
 
 # how to use
 
@@ -46,17 +47,17 @@
           
         ......
           
-        handleResponse = (isResponseSuccess, url, resolve, reject, data) =>{
+        handleResponse = (isResponseSuccess, response, resolve, reject, data) =>{
           if (isResponseSuccess) {
             if (!data.success) {// success is your server's custom fields
                 throw new Error(JSON.stringify(data))
             } else {
                 resolve(data);
-                console.log('XFetch_success-->', `url:${url}\n`, data);
+                console.log('XFetch_success-->', response.url, data);
             }
           }else {
             reject(data);
-            console.log('XFetch_error-->', `url:${url}\n`, data);
+            console.log('XFetch_error-->', response.url, data);
             //do something...
             //for example, Toast.
           }
