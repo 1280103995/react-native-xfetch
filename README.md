@@ -14,7 +14,7 @@
 # how to use
 
 ## Step 1:
-    yarn add react-native-xfetch
+    npm i react-native-xfetch --save
     
 ## Step 2:
     init XFetch: 
