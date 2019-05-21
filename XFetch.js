@@ -4,9 +4,10 @@ const REFRESH_TOKEN_SUCCESS = 'refresh token success';
 let instance = null;
 
 class XFetchConfig {
-  baseUrl = null;
+  baseUrl: string;
   commonTimeOut = 30 * 1000;
   commonHeaders = {'Content-Type': 'application/json'};
+  commonHeadersFun: Function = () => null;
 
   responseFunc: Function;
   refreshTokenPromise = null;
@@ -68,7 +69,7 @@ class XFetchConfig {
       body: isFormData ? params : JSON.stringify(params)
     };
 
-    if (cookie) option.credentials = 'include'
+    if (cookie) option.credentials = 'include';
 
     return new Promise((resolve, reject) => {
       let callbackResponse = null;
@@ -129,11 +130,11 @@ class XFetchConfig {
     return this
   }
 
-  setCommonHeaders(headers, isReplace = false) {
-    if (isReplace) {
-      this.commonHeaders = headers;
+  setCommonHeaders(commonHeaders: Object | Function){
+    if (typeof commonHeaders === 'object'){
+      this.commonHeaders = commonHeaders
     } else {
-      this.commonHeaders = Object.assign(this.commonHeaders, headers)
+      this.commonHeadersFun = commonHeaders;
     }
     return this
   }
@@ -141,13 +142,13 @@ class XFetchConfig {
 }
 
 class XFetch {
-  url = null;
-  method = null;
-  timeout = 0;
-  headers = null;
+  url: string;
+  method: string;
+  timeout: number = 0;
+  headersFun: Function = ()=> null;
+  isReplaceAllHeader: boolean = false;
   params = null;
   isForm = false;
-  noHeaders = false;
   cookie = false;
 
   _doRefreshToken(){
@@ -155,7 +156,7 @@ class XFetch {
   }
 
   _getUrl() {
-    let tempUrl = null;
+    let tempUrl: string;
     if (this.url.startsWith('http') || this.url.startsWith('https')) {
       tempUrl = this.url
     } else {
@@ -165,12 +166,13 @@ class XFetch {
   }
 
   _getHeaders(){
-    if (this.noHeaders && this.headers == null) return null;
-    if (this.headers == null) return instance.commonHeaders;
-    if (this.headers.hasOwnProperty('Authorization') && instance.commonHeaders.hasOwnProperty('Authorization')){
-      this.headers['Authorization'] = instance.commonHeaders['Authorization']
+    if (this.isReplaceAllHeader){
+      return this.headersFun()
     }
-    return this.headers
+    const commonHeaders = instance.commonHeadersFun() != null ? instance.commonHeadersFun() : instance.commonHeaders;
+    let headers = this.headersFun();
+    headers = Object.assign(commonHeaders, headers);
+    return headers
   }
 
   setTimeOut(time: number) {
@@ -178,17 +180,9 @@ class XFetch {
     return this
   }
 
-  setHeaders(header, isReplace = false) {
-    if (header == null){
-      this.noHeaders = true
-    } else {
-      if (isReplace) {
-        this.headers = header;
-      } else {
-        const tempHeaders = JSON.parse(JSON.stringify(instance.commonHeaders));
-        this.headers = Object.assign(tempHeaders, header);
-      }
-    }
+  setHeaders(headersFun: Function, isReplace: boolean = false) {
+    this.headersFun = headersFun;
+    this.isReplaceAllHeader = isReplace;
     return this
   }
 

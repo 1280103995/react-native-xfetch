@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, RefreshControl, ScrollView, Text} from "react-native";
-// import {XFetch} from "../../XFetch";
-import {XFetch} from "react-native-xfetch";
+import {XFetch} from "../../XFetch";
+// import {XFetch} from "react-native-xfetch";
 
 export default class HomeScreen extends React.Component {
 
@@ -16,6 +16,13 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate('Login')
   };
 
+  _getHeader = () => {
+    return {
+      'testHeader': 'test',
+      'authorization': tokenTime
+    }
+  };
+
   _onRefresh = () => {
     if (!isLogin) {
       alert('unlogin');
@@ -25,17 +32,14 @@ export default class HomeScreen extends React.Component {
     this.setState({refreshState: true});
 
     //test: only use this header
-    const header = {
-      'testHeader': 'test'
-    };
-    let home = new XFetch().get('request').setHeaders(header, true).do().then((res) => {
+    let home = new XFetch().get('request').setHeaders(()=>this._getHeader(), true).do().then((res) => {
 
     }).catch((error) => {
 
     });
 
     //test: this request has no request header
-    let praise = new XFetch().post('test_post').setHeaders(null).setParams({'test': 111}).do().then(() => {
+    let praise = new XFetch().post('test_post').setParams({'test': 111}).do().then(() => {
 
     }).catch((e) => {
 

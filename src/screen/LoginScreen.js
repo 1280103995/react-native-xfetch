@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Text, TextInput, View} from "react-native";
-// import {XFetch, XFetchConfig} from "../../XFetch";
-import {XFetch, XFetchConfig} from "react-native-xfetch";
+import {XFetch, XFetchConfig} from "../../XFetch";
+// import {XFetch, XFetchConfig} from "react-native-xfetch";
 
 export default class LoginScreen extends React.Component {
 
@@ -13,21 +13,18 @@ export default class LoginScreen extends React.Component {
     };
   }
 
-  _login = () => {
-    const header = {
+  _getHeader = () => {
+    return{
       'loginTestHeader': 'loginTest'
-    };
+    }
+  };
+
+  _login = () => {
     const param = {
       'auth': '123'
     };
     //test: merge this header and commonHeader
-    new XFetch().get('get_token').setHeaders(header).setParams(param).do().then((res)=>{
-      //after login success, add "Authorization" to HTTP header
-      XFetchConfig.getInstance()
-        .setCommonHeaders({
-          'Authorization': res.data.token
-        });
-
+    new XFetch().get('get_token').setHeaders(()=>this._getHeader()).setParams(param).do().then((res)=>{
       tokenTime = res.data.token;
       isLogin = true;
       this.props.navigation.goBack()

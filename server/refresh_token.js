@@ -14,7 +14,7 @@ http.createServer(function (request, response) {
   if (authorization) {
     let token_time = parseFloat(authorization);
     let cur_time = new Date().getTime();
-    isTokenExpired = cur_time - token_time < 30 * 1000;
+    isTokenExpired = cur_time - token_time > 30 * 1000;
   }
 
   if (pathname === "/get_token") {//GET
