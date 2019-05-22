@@ -145,8 +145,9 @@ class XFetch {
   url: string;
   method: string;
   timeout: number = 0;
+  headers: Object;
   headersFun: Function = ()=> null;
-  isReplaceAllHeader: boolean = false;
+  isReplaceAllHeaders: boolean = false;
   params = null;
   isForm = false;
   cookie = false;
@@ -166,11 +167,11 @@ class XFetch {
   }
 
   _getHeaders(){
-    if (this.isReplaceAllHeader){
-      return this.headersFun()
+    if (this.isReplaceAllHeaders){
+      return this.headersFun() != null ? this.headersFun() : this.headers;
     }
     const commonHeaders = instance.commonHeadersFun() != null ? instance.commonHeadersFun() : instance.commonHeaders;
-    let headers = this.headersFun();
+    let headers = this.headersFun() != null ? this.headersFun() : this.headers;
     headers = Object.assign(commonHeaders, headers);
     return headers
   }
@@ -180,9 +181,13 @@ class XFetch {
     return this
   }
 
-  setHeaders(headersFun: Function, isReplace: boolean = false) {
-    this.headersFun = headersFun;
-    this.isReplaceAllHeader = isReplace;
+  setHeaders(headers: Object | Function, isReplace: boolean = false) {
+    if (typeof headers === 'object'){
+      this.headers = headers;
+    }else {
+      this.headersFun = headers;
+    }
+    this.isReplaceAllHeaders = isReplace;
     return this
   }
 

@@ -18,7 +18,7 @@ export default class HomeScreen extends React.Component {
 
   _getHeader = () => {
     return {
-      'testHeader': 'test',
+      'testReplaceAllHeaders': 'function',
       'authorization': tokenTime
     }
   };
@@ -32,14 +32,18 @@ export default class HomeScreen extends React.Component {
     this.setState({refreshState: true});
 
     //test: only use this header
-    let home = new XFetch().get('request').setHeaders(()=>this._getHeader(), true).do().then((res) => {
+    const headers = {
+      'testReplaceAllHeaders': 'const',
+      'authorization': tokenTime
+    };
+    let home = new XFetch().get('request').setHeaders(this._getHeader, true).do().then((res) => {
 
     }).catch((error) => {
 
     });
 
     //test: this request has no request header
-    let praise = new XFetch().post('test_post').setParams({'test': 111}).do().then(() => {
+    let praise = new XFetch().post('test_post').setHeaders(headers).setParams({'test': 111}).do().then(() => {
 
     }).catch((e) => {
 
