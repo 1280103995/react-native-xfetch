@@ -33,12 +33,20 @@ class XFetchConfig {
     return instance;
   }
 
-  _timeoutFetch(fetch_promise, time = 0) {
+  _timeoutFetch(fetch_promise, time = 0, xfetch: XFetch) {
     let timeoutFunc = null;
 
     let timeout_promise = new Promise((resolve, reject) => {
       timeoutFunc = () => {
-        reject(TIME_OUT)
+        let option = {
+          ok: false,
+          status: 408,
+          statusText: TIME_OUT,
+          headers: xfetch._getHeaders(),
+          url: xfetch._getUrl()
+        };
+        let response = new Response(null, option);
+        resolve(response)
       }
     });
 
@@ -76,7 +84,7 @@ class XFetchConfig {
 
     return new Promise((resolve, reject) => {
       let cbResponse = null;
-      this._timeoutFetch(fetch(url, option), timeout).then((response) =>{
+      this._timeoutFetch(fetch(url, option), timeout, xfetch).then((response) =>{
         cbResponse = response;
         if (response.ok) return response.json();
         else throw new Error(JSON.stringify(response))

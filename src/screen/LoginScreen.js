@@ -21,7 +21,7 @@ export default class LoginScreen extends React.Component {
       'auth': '123'
     };
     //test: merge this header and commonHeader
-    new XFetch().get('get_token').setHeaders(headers).setParams(param).do().then((res)=>{
+    new XFetch().get('get_token').setHeaders(headers).setTimeOut(1).setParams(param).do().then((res)=>{
       tokenTime = res.data.token;
       isLogin = true;
       this.props.navigation.goBack()
