@@ -1,6 +1,9 @@
 import queryString from "query-string";
 
-const REFRESH_TOKEN_SUCCESS = 'refresh token success';
+const REFRESH_TOKEN_SUCCESS = 'XFetch refresh token success';
+const TIME_OUT = 'XFetch request timed out';
+const No_BASE_URL = 'XFetch requires a base url';
+const NO_INITIALIZE = 'Initialize XFetchConfig before using XFetch';
 let instance = null;
 
 class XFetchConfig {
@@ -9,7 +12,7 @@ class XFetchConfig {
   commonHeaders = {'Content-Type': 'application/json'};
   commonHeadersFun: Function = () => null;
 
-  responseFunc: Function;
+  responseFun: Function;
   refreshTokenPromise = null;
   isTokenRefreshing = false;
   isTokenExpired: Function = () => null;
@@ -35,7 +38,7 @@ class XFetchConfig {
 
     let timeout_promise = new Promise((resolve, reject) => {
       timeoutFunc = () => {
-        reject('request timeout')
+        reject(TIME_OUT)
       }
     });
 
@@ -72,16 +75,16 @@ class XFetchConfig {
     if (cookie) option.credentials = 'include';
 
     return new Promise((resolve, reject) => {
-      let callbackResponse = null;
+      let cbResponse = null;
       this._timeoutFetch(fetch(url, option), timeout).then((response) =>{
-        callbackResponse = response;
+        cbResponse = response;
         if (response.ok) return response.json();
         else throw new Error(JSON.stringify(response))
       }).then((responseData) => {
-        if (this.responseFunc) this.responseFunc(true, callbackResponse, resolve, reject, responseData);
+        if (this.responseFun) this.responseFun(true, cbResponse, resolve, reject, responseData);
         else resolve(responseData)
       }).catch((error) => {
-        if (this.responseFunc) this.responseFunc(false, callbackResponse, resolve, reject, error);
+        if (this.responseFun) this.responseFun(false, cbResponse, resolve, reject, error);
         else reject(error)
       })
     })
@@ -106,15 +109,15 @@ class XFetchConfig {
     return this.refreshTokenPromise
   }
 
-  setResponseConfig(responseFunc: Function){
-    this.responseFunc = responseFunc;
+  setResponseConfig(responseFun: Function){
+    this.responseFun = responseFun;
     return this
   }
 
-  setRefreshTokenConfig(expired: Function, refreshTokenFunc: Function, refreshTokenCallBack: Function) {
-    if (refreshTokenFunc != null) {
+  setRefreshTokenConfig(expired: Function, refreshTokenFun: Function, refreshTokenCallBack: Function) {
+    if (refreshTokenFun != null) {
       this.isTokenExpired = expired;
-      this.refreshTokenFunc = refreshTokenFunc;
+      this.refreshTokenFunc = refreshTokenFun;
       this.refreshTokenCallBackFunc = refreshTokenCallBack
     }
     return this
@@ -161,6 +164,7 @@ class XFetch {
     if (this.url.startsWith('http') || this.url.startsWith('https')) {
       tempUrl = this.url
     } else {
+      if (!instance.baseUrl) throw new Error(No_BASE_URL);
       tempUrl = instance.baseUrl + this.url
     }
     return tempUrl
@@ -234,6 +238,7 @@ class XFetch {
   }
 
   async do() {
+    if (!instance) throw new Error(NO_INITIALIZE);
     if (instance.isTokenExpired()) {
       let promise = await instance._refreshToken();
       if (promise !== REFRESH_TOKEN_SUCCESS) {
