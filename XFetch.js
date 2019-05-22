@@ -60,8 +60,8 @@ class XFetchConfig {
   _baseRequest(xfetch: XFetch) {
     let method = xfetch.method;
     let url = xfetch._getUrl();
-    let params = xfetch.params;
-    let isFormData = xfetch.isForm;
+    let params = xfetch._getParams();
+    let isFormData = xfetch.isFormData;
     let header = xfetch._getHeaders();
     let timeout = xfetch.timeout;
     let cookie = xfetch.cookie;
@@ -159,8 +159,9 @@ class XFetch {
   headers: Object;
   headersFun: Function = ()=> null;
   isReplaceAllHeaders: boolean = false;
-  params = null;
-  isForm: boolean = false;
+  params: Object = null;
+  paramsFun: Function = () => null;
+  isFormData: boolean = false;
   cookie: boolean = false;
 
   _doRefreshToken(){
@@ -188,6 +189,10 @@ class XFetch {
     return headers
   }
 
+  _getParams(){
+    return this.paramsFun() != null ? this.paramsFun() : this.params;
+  }
+
   setTimeOut(time: number) {
     this.timeout = time;
     return this
@@ -203,16 +208,13 @@ class XFetch {
     return this
   }
 
-  setParams(params, isFormData = false) {
-    this.params = params;
-    if (isFormData) {
-      const header = {
-        'Content-Type': 'multipart/form-data',
-      };
-      const tempHeaders = JSON.parse(JSON.stringify(instance.commonHeaders));
-      this.headers = Object.assign(tempHeaders, header);
-      this.isForm = true;
+  setParams(params: Object | Function, isFormData = false) {
+    if (typeof params === 'object'){
+      this.params = params;
+    }else {
+      this.paramsFun = params;
     }
+    this.isFormData = isFormData;
     return this
   }
 

@@ -80,8 +80,20 @@ http.createServer(function (request, response) {
       };
       response.end(JSON.stringify(result));
     }
+  } else if (pathname === "/upload") {
+    if (isTokenExpired) {
+      response.end(JSON.stringify({"success": false, "error_code": 1001, "msg": "token expired"}));
+    } else {
+      let result = {
+        "success": true,
+        "msg": "upload success",
+        "data": request.body
+      };
+
+      response.end(JSON.stringify(result));
+    }
   }
 
 }).listen(8000);
 
-console.log('Server running at http://127.0.0.1:8888/');
+console.log('Server running at http://127.0.0.1:8000/');

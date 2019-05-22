@@ -32,24 +32,37 @@ export default class HomeScreen extends React.Component {
     this.setState({refreshState: true});
 
     //test: only use this header
-    const headers = {
-      'testReplaceAllHeaders': 'const',
-      'authorization': tokenTime
-    };
     let home = new XFetch().get('request').setHeaders(this._getHeader, true).do().then((res) => {
 
     }).catch((error) => {
 
     });
 
-    //test: this request has no request header
+    //test: post request
+    const headers = {
+      'testReplaceAllHeaders': 'const',
+      'authorization': tokenTime
+    };
     let praise = new XFetch().post('test_post').setHeaders(headers).setParams({'test': 111}).do().then(() => {
 
     }).catch((e) => {
 
     });
 
-    Promise.all([home, praise]).finally(() => this.setState({refreshState: false}))
+    //test: formData upload
+    const headersFormData = {
+      'testFormData': 'upload',
+      'Content-Type': 'multipart/form-data',
+    };
+    let formData = new FormData();
+    formData.append('test', 111);
+    let upload = new XFetch().post('upload').setHeaders(headersFormData).setParams(formData, true).do().then(() => {
+
+    }).catch((e) => {
+
+    });
+
+    Promise.all([home, praise, upload]).finally(() => this.setState({refreshState: false}))
   };
 
   render() {
