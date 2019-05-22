@@ -10,14 +10,14 @@ class XFetchConfig {
   baseUrl: string;
   commonTimeOut: number = 30 * 1000;
   commonHeaders: Object = {'Content-Type': 'application/json'};
-  commonHeadersFun: Function = () => null;
-  responseFun: Function;
+  commonHeadersFun: ?Function;
+  responseFun: ?Function;
 
   refreshTokenPromise: ?Promise;
   isTokenRefreshing: boolean = false;
-  isTokenExpired: Function = () => null;
-  refreshTokenFunc: Function;
-  refreshTokenCallBackFunc: Function;
+  isTokenExpired: ?Function;
+  refreshTokenFun: ?Function;
+  refreshTokenCallBackFun: ?Function;
 
   constructor() {
     if (!instance) {
@@ -34,10 +34,10 @@ class XFetchConfig {
   }
 
   _timeoutFetch(fetch_promise, time = 0, xfetch: XFetch) {
-    let timeoutFunc = null;
+    let timeoutFun = null;
 
     let timeout_promise = new Promise((resolve, reject) => {
-      timeoutFunc = () => {
+      timeoutFun = () => {
         let option = {
           ok: false,
           status: 408,
@@ -51,7 +51,7 @@ class XFetchConfig {
     });
 
     setTimeout(() => {
-      timeoutFunc();
+      timeoutFun();
     }, time === 0 ? this.commonTimeOut : time);
 
     return Promise.race([fetch_promise, timeout_promise])
@@ -84,7 +84,7 @@ class XFetchConfig {
 
     return new Promise((resolve, reject) => {
       let cbResponse: Response;
-      this._timeoutFetch(fetch(url, option), timeout, xfetch).then((response) =>{
+      this._timeoutFetch(fetch(url, option), timeout, xfetch).then((response) => {
         cbResponse = response;
         if (response.ok) return response.json();
         else throw new Error(JSON.stringify(response))
@@ -101,9 +101,9 @@ class XFetchConfig {
   async _refreshToken() {
     if (this.isTokenRefreshing) return await this.refreshTokenPromise;
     this.isTokenRefreshing = true;
-    this.refreshTokenPromise =  new Promise((refreshTokenResolve, refreshTokenReject) => {
+    this.refreshTokenPromise = new Promise((refreshTokenResolve, refreshTokenReject) => {
       const promise = new Promise((resolve, reject) => {
-        this.refreshTokenFunc()._doRefreshToken().then((res) => {
+        this.refreshTokenFun()._doRefreshToken().then((res) => {
           refreshTokenResolve(REFRESH_TOKEN_SUCCESS);
           resolve(res)
         }).catch((error) => {
@@ -111,23 +111,21 @@ class XFetchConfig {
           reject(error)
         })
       });
-      this.refreshTokenCallBackFunc && this.refreshTokenCallBackFunc(promise)
+      this.refreshTokenCallBackFun(promise)
     });
     this.refreshTokenPromise.finally(() => this.isTokenRefreshing = false);
     return this.refreshTokenPromise
   }
 
-  setResponseConfig(responseFun: Function){
+  setResponseConfig(responseFun: Function) {
     this.responseFun = responseFun;
     return this
   }
 
   setRefreshTokenConfig(expired: Function, refreshTokenFun: Function, refreshTokenCallBack: Function) {
-    if (refreshTokenFun != null) {
-      this.isTokenExpired = expired;
-      this.refreshTokenFunc = refreshTokenFun;
-      this.refreshTokenCallBackFunc = refreshTokenCallBack
-    }
+    this.isTokenExpired = expired;
+    this.refreshTokenFun = refreshTokenFun;
+    this.refreshTokenCallBackFun = refreshTokenCallBack;
     return this
   }
 
@@ -141,8 +139,8 @@ class XFetchConfig {
     return this
   }
 
-  setCommonHeaders(commonHeaders: Object | Function){
-    if (typeof commonHeaders === 'object'){
+  setCommonHeaders(commonHeaders: Object | Function) {
+    if (typeof commonHeaders === 'object') {
       this.commonHeaders = commonHeaders
     } else {
       this.commonHeadersFun = commonHeaders;
@@ -157,14 +155,14 @@ class XFetch {
   method: string;
   timeout: number = 0;
   headers: Object;
-  headersFun: Function = ()=> null;
+  headersFun: ?Function;
   isReplaceAllHeaders: boolean = false;
   params: Object = null;
-  paramsFun: Function = () => null;
+  paramsFun: ?Function;
   isFormData: boolean = false;
   cookie: boolean = false;
 
-  _doRefreshToken(){
+  _doRefreshToken() {
     return instance._baseRequest(this);
   }
 
@@ -179,18 +177,18 @@ class XFetch {
     return tempUrl
   }
 
-  _getHeaders(){
-    if (this.isReplaceAllHeaders){
-      return this.headersFun() != null ? this.headersFun() : this.headers;
+  _getHeaders() {
+    if (this.isReplaceAllHeaders) {
+      return this.headersFun ? this.headersFun() : this.headers;
     }
-    const commonHeaders = instance.commonHeadersFun() != null ? instance.commonHeadersFun() : instance.commonHeaders;
-    let headers = this.headersFun() != null ? this.headersFun() : this.headers;
+    const commonHeaders = instance.commonHeadersFun ? instance.commonHeadersFun() : instance.commonHeaders;
+    let headers = this.headersFun ? this.headersFun() : this.headers;
     headers = Object.assign(commonHeaders, headers);
     return headers
   }
 
-  _getParams(){
-    return this.paramsFun() != null ? this.paramsFun() : this.params;
+  _getParams() {
+    return this.paramsFun ? this.paramsFun() : this.params;
   }
 
   setTimeOut(time: number) {
@@ -199,9 +197,9 @@ class XFetch {
   }
 
   setHeaders(headers: Object | Function, isReplace: boolean = false) {
-    if (typeof headers === 'object'){
+    if (typeof headers === 'object') {
       this.headers = headers;
-    }else {
+    } else {
       this.headersFun = headers;
     }
     this.isReplaceAllHeaders = isReplace;
@@ -209,16 +207,16 @@ class XFetch {
   }
 
   setParams(params: Object | Function, isFormData = false) {
-    if (typeof params === 'object'){
+    if (typeof params === 'object') {
       this.params = params;
-    }else {
+    } else {
       this.paramsFun = params;
     }
     this.isFormData = isFormData;
     return this
   }
 
-  useCookie(use: boolean){
+  useCookie(use: boolean) {
     this.cookie = use;
     return this
   }
@@ -249,7 +247,7 @@ class XFetch {
 
   async do() {
     if (!instance) throw new Error(NO_INITIALIZE);
-    if (instance.isTokenExpired()) {
+    if (instance.isTokenExpired && instance.isTokenExpired() && instance.refreshTokenFun && instance.refreshTokenCallBackFun) {
       let promise = await instance._refreshToken();
       if (promise !== REFRESH_TOKEN_SUCCESS) {
         return Promise.reject(promise);
