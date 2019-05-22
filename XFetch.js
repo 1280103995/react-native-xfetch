@@ -8,13 +8,13 @@ let instance = null;
 
 class XFetchConfig {
   baseUrl: string;
-  commonTimeOut = 30 * 1000;
-  commonHeaders = {'Content-Type': 'application/json'};
+  commonTimeOut: number = 30 * 1000;
+  commonHeaders: Object = {'Content-Type': 'application/json'};
   commonHeadersFun: Function = () => null;
-
   responseFun: Function;
-  refreshTokenPromise = null;
-  isTokenRefreshing = false;
+
+  refreshTokenPromise: ?Promise;
+  isTokenRefreshing: boolean = false;
   isTokenExpired: Function = () => null;
   refreshTokenFunc: Function;
   refreshTokenCallBackFunc: Function;
@@ -83,7 +83,7 @@ class XFetchConfig {
     if (cookie) option.credentials = 'include';
 
     return new Promise((resolve, reject) => {
-      let cbResponse = null;
+      let cbResponse: Response;
       this._timeoutFetch(fetch(url, option), timeout, xfetch).then((response) =>{
         cbResponse = response;
         if (response.ok) return response.json();
@@ -160,8 +160,8 @@ class XFetch {
   headersFun: Function = ()=> null;
   isReplaceAllHeaders: boolean = false;
   params = null;
-  isForm = false;
-  cookie = false;
+  isForm: boolean = false;
+  cookie: boolean = false;
 
   _doRefreshToken(){
     return instance._baseRequest(this);

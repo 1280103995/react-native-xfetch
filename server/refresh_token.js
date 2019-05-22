@@ -18,17 +18,14 @@ http.createServer(function (request, response) {
   }
 
   if (pathname === "/get_token") {//GET
-    setInterval(()=>{
-      // get a new token or refresh the token
-      let result = {
-        "success": true,
-        "data": {
-          "token": new Date().getTime().toString()
-        }
-      };
-      response.end(JSON.stringify(result));
-    }, 2)
-
+    // get a new token or refresh the token
+    let result = {
+      "success": true,
+      "data": {
+        "token": new Date().getTime().toString()
+      }
+    };
+    response.end(JSON.stringify(result));
   } else if (pathname === "/refresh_token" && request.method === 'POST') {//POST
 
     let refreshTokenInvalid = false;
