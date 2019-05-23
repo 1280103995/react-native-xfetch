@@ -30,7 +30,7 @@
         };
         
         XFetchConfig.getInstance()
-          .setBaseUrl('http host')
+          .setBaseUrl('http://127.0.0.1:8000/')
           .setCommonHeaders(commonHeader)
           .setCommonTimeOut(30000)
           //here, you can monitor the response results of all requests.
@@ -73,14 +73,14 @@
     
        import {XFetch} from "react-native-xfetch";
     
-       let promise = new XFetch().get('http address').setHeaders(...).setParams(...).do().then((res) => {
+       let promise = new XFetch().get('url').setHeaders(...).setParams(...).do().then((res) => {
           ...
        }).catch((error) => {
           ...
        });
        
        
-       let promise1 = new XFetch().post('http address').setHeaders(...).setParams(..., isFormData = false).do().then((res) => {
+       let promise1 = new XFetch().post('url').setHeaders(...).setParams(..., isFormData = false).do().then((res) => {
           ...
        }).catch((error) => {
           ...
@@ -89,10 +89,6 @@
 ## defaultProps
 1. timeout: 30s
 2. header: 'Content-Type': 'application/json'
-3. If your request parameter is a form and setParams(params, true) is used, the header's 'Content-Type' value will be set to     'multipart/form-data'
-4. setHeaders(null): this request has no request header
-5. setHeaders(header, isReplace = false): merge this header and commonHeader
-6. setHeaders(header, isReplace = true): only use this header
 
 ## Run demo
 
@@ -104,9 +100,7 @@ The token validity period is 30s, and the refresh token is valid for 60s.
 
 3. `cd server && node refresh_token.js` run http service
 
-4. `don't forget to modify the BaseUrl`
-
-5. `react-native run-android` or `react-native run-ios`
+4. `react-native run-android` or `react-native run-ios`
 
 
 ## License
