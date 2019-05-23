@@ -89,10 +89,10 @@ class XFetchConfig {
         if (response.ok) return response.json();
         else throw new Error(JSON.stringify(response))
       }).then((responseData) => {
-        if (this.responseFun) this.responseFun(true, cbResponse, resolve, reject, responseData);
+        if (this.responseFun) this.responseFun(cbResponse, resolve, reject, responseData, xfetch);
         else resolve(responseData)
       }).catch((error) => {
-        if (this.responseFun) this.responseFun(false, cbResponse, resolve, reject, error);
+        if (this.responseFun) this.responseFun(cbResponse, resolve, reject, error, xfetch);
         else reject(error)
       })
     })

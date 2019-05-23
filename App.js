@@ -55,8 +55,8 @@ export default class App extends Component {
       })
   }
 
-  handleResponse = (isResponseSuccess, response, resolve, reject, data) =>{
-    if (isResponseSuccess) {
+  handleResponse = async(response, resolve, reject, data, xfetch) =>{
+    if (response.ok) {
       if (!data.success) {// success is your server's custom fields
         // throw new Error(JSON.stringify(data))
         reject(data);
@@ -66,6 +66,12 @@ export default class App extends Component {
       }
     }else {
       reject(data);
+      //TODO Authentication failed
+      // if (response.status === 401){
+      //   await XFetchConfig.getInstance()._refreshToken();
+      //   //retry
+      //   xfetch.do()
+      // }
       console.log('XFetch_error-->', response.url, data);
       //do something...
       //for example, Toast.
