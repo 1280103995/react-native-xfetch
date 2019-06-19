@@ -10,14 +10,14 @@ class XFetchConfig {
   baseUrl: string;
   commonTimeOut: number = 30 * 1000;
   commonHeaders: Object = {'Content-Type': 'application/json'};
-  commonHeadersFun: ?Function;
-  responseFun: ?Function;
+  commonHeadersFunc: ?Function;
+  responseFunc: ?Function;
 
   refreshTokenPromise: ?Promise;
   isTokenRefreshing: boolean = false;
   isTokenExpired: ?Function;
-  refreshTokenFun: ?Function;
-  refreshTokenCallBackFun: ?Function;
+  refreshTokenFunc: ?Function;
+  refreshTokenCallBack: ?Function;
 
   constructor() {
     if (!instance) {
@@ -83,17 +83,20 @@ class XFetchConfig {
     if (cookie) option.credentials = 'include';
 
     return new Promise((resolve, reject) => {
+      xfetch.onStart();
       let cbResponse: Response;
       this._timeoutFetch(fetch(url, option), timeout, xfetch).then((response) => {
         cbResponse = response;
         if (response.ok) return response.json();
         else throw new Error(JSON.stringify(response))
       }).then((responseData) => {
-        if (this.responseFun) this.responseFun(cbResponse, resolve, reject, responseData, xfetch);
+        if (this.responseFunc) this.responseFunc(cbResponse, resolve, reject, responseData, xfetch);
         else resolve(responseData)
       }).catch((error) => {
-        if (this.responseFun) this.responseFun(cbResponse, resolve, reject, error, xfetch);
+        if (this.responseFunc) this.responseFunc(cbResponse, resolve, reject, error, xfetch);
         else reject(error)
+      }).finally(()=>{
+        xfetch.onComplete();
       })
     })
   }
@@ -103,7 +106,7 @@ class XFetchConfig {
     this.isTokenRefreshing = true;
     this.refreshTokenPromise = new Promise((refreshTokenResolve, refreshTokenReject) => {
       const promise = new Promise((resolve, reject) => {
-        this.refreshTokenFun()._doRefreshToken().then((res) => {
+        this.refreshTokenFunc()._doRefreshToken().then((res) => {
           refreshTokenResolve(REFRESH_TOKEN_SUCCESS);
           resolve(res)
         }).catch((error) => {
@@ -111,21 +114,21 @@ class XFetchConfig {
           reject(error)
         })
       });
-      this.refreshTokenCallBackFun(promise)
+      this.refreshTokenCallBack(promise)
     });
     this.refreshTokenPromise.finally(() => this.isTokenRefreshing = false);
     return this.refreshTokenPromise
   }
 
-  setResponseConfig(responseFun: Function) {
-    this.responseFun = responseFun;
+  setResponseConfig(responseFunc: Function) {
+    this.responseFunc = responseFunc;
     return this
   }
 
-  setRefreshTokenConfig(expired: Function, refreshTokenFun: Function, refreshTokenCallBack: Function) {
+  setRefreshTokenConfig(expired: Function, refreshTokenFunc: Function, refreshTokenCallBack: Function) {
     this.isTokenExpired = expired;
-    this.refreshTokenFun = refreshTokenFun;
-    this.refreshTokenCallBackFun = refreshTokenCallBack;
+    this.refreshTokenFunc = refreshTokenFunc;
+    this.refreshTokenCallBack = refreshTokenCallBack;
     return this
   }
 
@@ -143,7 +146,7 @@ class XFetchConfig {
     if (typeof commonHeaders === 'object') {
       this.commonHeaders = commonHeaders
     } else {
-      this.commonHeadersFun = commonHeaders;
+      this.commonHeadersFunc = commonHeaders;
     }
     return this
   }
@@ -155,17 +158,34 @@ class XFetch {
   method: string;
   timeout: number = 0;
   headers: Object;
-  headersFun: ?Function;
+  headersFunc: ?Function;
   isReplaceAllHeaders: boolean = false;
   params: Object = null;
-  paramsFun: ?Function;
+  paramsFunc: ?Function;
   isFormData: boolean = false;
   cookie: boolean = false;
 
+  onStart(){
+
+  }
+
+  onComplete(){
+
+  }
+
+  /**
+   * Only used when the token expires
+   * @private
+   */
   _doRefreshToken() {
     return instance._baseRequest(this);
   }
 
+  /**
+   * compute url
+   * @returns {string}
+   * @private
+   */
   _getUrl() {
     let tempUrl: string;
     if (this.url.startsWith('http') || this.url.startsWith('https')) {
@@ -177,18 +197,28 @@ class XFetch {
     return tempUrl
   }
 
+  /**
+   * compute headers
+   * @returns {*}
+   * @private
+   */
   _getHeaders() {
     if (this.isReplaceAllHeaders) {
-      return this.headersFun ? this.headersFun() : this.headers;
+      return this.headersFunc ? this.headersFunc() : this.headers;
     }
-    const commonHeaders = instance.commonHeadersFun ? instance.commonHeadersFun() : instance.commonHeaders;
-    let headers = this.headersFun ? this.headersFun() : this.headers;
+    const commonHeaders = instance.commonHeadersFunc ? instance.commonHeadersFunc() : instance.commonHeaders;
+    let headers = this.headersFunc ? this.headersFunc() : this.headers;
     headers = Object.assign(commonHeaders, headers);
     return headers
   }
 
+  /**
+   * compute params
+   * @returns {Object}
+   * @private
+   */
   _getParams() {
-    return this.paramsFun ? this.paramsFun() : this.params;
+    return this.paramsFunc ? this.paramsFunc() : this.params;
   }
 
   setTimeOut(time: number) {
@@ -200,7 +230,7 @@ class XFetch {
     if (typeof headers === 'object') {
       this.headers = headers;
     } else {
-      this.headersFun = headers;
+      this.headersFunc = headers;
     }
     this.isReplaceAllHeaders = isReplace;
     return this
@@ -210,7 +240,7 @@ class XFetch {
     if (typeof params === 'object') {
       this.params = params;
     } else {
-      this.paramsFun = params;
+      this.paramsFunc = params;
     }
     this.isFormData = isFormData;
     return this
@@ -247,7 +277,7 @@ class XFetch {
 
   async do() {
     if (!instance) throw new Error(NO_INITIALIZE);
-    if (instance.isTokenExpired && instance.isTokenExpired() && instance.refreshTokenFun && instance.refreshTokenCallBackFun) {
+    if (instance.isTokenExpired && instance.isTokenExpired() && instance.refreshTokenFunc && instance.refreshTokenCallBack) {
       let promise = await instance._refreshToken();
       if (promise !== REFRESH_TOKEN_SUCCESS) {
         return Promise.reject(promise);

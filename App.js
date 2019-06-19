@@ -2,8 +2,8 @@
 import React, {Component} from 'react';
 import AppNavigator from "./src/navigation/StackNavigator";
 import {createAppContainer, NavigationActions} from "react-navigation";
-import {XFetch, XFetchConfig} from "./XFetch";
-// import {XFetch, XFetchConfig} from "react-native-xfetch";
+// import {XFetch, XFetchConfig} from "./XFetch";
+import {XFetch, XFetchConfig} from "react-native-xfetch";
 
 global.isLogin = false;
 global.tokenTime = 0;
